@@ -92,5 +92,10 @@ public class BottomNavigationActivity extends AppCompatActivity {
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setCurrentItem(0);
+
+        //测试底部导航栏消息通知数目
+        mBottomNavigationView.setBadgeValue(1, 1);
+        mBottomNavigationView.setBadgeValue(2, 10);
+        mBottomNavigationView.setBadgeValue(2, -1);
     }
 }

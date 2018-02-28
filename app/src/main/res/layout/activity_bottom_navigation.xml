@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="start"
-        app:menu="@menu/navigation"/>
+        app:menu="@menu/navigation"
+        app:badge_layout="@layout/common_badge"/>
 
     <View
         android:layout_width="match_parent"

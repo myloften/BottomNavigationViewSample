@@ -21,15 +21,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 package com.loften.bottomnavigationviewsample.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.loften.bottomnavigationviewsample.R;
+import com.loften.bottomnavigationviewsample.utils.SizeUtils;
 
 import java.lang.reflect.Field;
 
@@ -39,16 +46,64 @@ import java.lang.reflect.Field;
 
 public class DivBottomNavigationView extends BottomNavigationView {
 
+    private static final int BADGE_MIN_WIDTH = 16;
+    private static final int BADGE_MARGIN_TOP = 5;
+    private static final int BADGE_MARGIN_LEFT = 15;
+
+    private BottomNavigationMenuView bottomMenuView;
+
     public DivBottomNavigationView(Context context) {
         super(context);
     }
 
     public DivBottomNavigationView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initBadges(context, attrs);
     }
 
     public DivBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    //初始化badge
+    private void initBadges(Context context, AttributeSet attrs){
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.advanced_bottom_navigation_bar);
+        int badgeLayouId = typedArray.getResourceId(R.styleable.advanced_bottom_navigation_bar_badge_layout, -1);
+        typedArray.recycle();
+        bottomMenuView = getField(getClass().getSuperclass(), this, "mMenuView", BottomNavigationMenuView.class);
+        BottomNavigationItemView[] mButtons = getField(bottomMenuView.getClass(), bottomMenuView, "mButtons", BottomNavigationItemView[].class);
+
+        int marginTop = SizeUtils.dp2px(context, BADGE_MARGIN_TOP);
+        int marginLeft = SizeUtils.dp2px(context, BADGE_MARGIN_LEFT);
+
+        for (BottomNavigationItemView button : mButtons) {
+            FrameLayout badge = (FrameLayout)View.inflate(context, badgeLayouId, null);
+            badge.setVisibility(View.GONE);
+            badge.setMinimumWidth(SizeUtils.dp2px(context, BADGE_MIN_WIDTH));
+
+            LayoutParams layoutParam = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT);
+            layoutParam.gravity = Gravity.START;
+
+            int oneItemAreaWidth = SizeUtils.dp2px(context, SizeUtils.getMeasuredWidth(button));
+
+            layoutParam.setMargins(oneItemAreaWidth, marginTop, 0, 0);
+            button.addView(badge, layoutParam);
+        }
+    }
+
+    //设置底部导航栏消息数目
+    public void setBadgeValue(int position, int count){
+        BottomNavigationItemView menuItem = (BottomNavigationItemView)bottomMenuView.getChildAt(position);
+        FrameLayout badge = (FrameLayout) menuItem.findViewById(R.id.bottom_bar_badge);
+        TextView badgeText = (TextView)menuItem.findViewById(R.id.bottom_bar_badge_text);
+
+        if(count > 0){
+            badgeText.setText(count+"");
+            badge.setVisibility(VISIBLE);
+        }else{
+            badge.setVisibility(GONE);
+        }
     }
 
     public void SetNormalBottomNavigation() {

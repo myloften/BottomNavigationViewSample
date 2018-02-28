@@ -63,7 +63,7 @@ public class DivBottomNavigationView extends BottomNavigationView {
             setField(button.getClass(), button, "mScaleUpFactor", 1);
             setField(button.getClass(), button, "mScaleDownFactor", 1);
 
-            mLargeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, mLargeLabel.getTextSize());
+            mLargeLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSmallLabel.getTextSize());
 
             setField(button.getClass(), button, "mShiftingMode", false);
         }
